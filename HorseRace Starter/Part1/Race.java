@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 public class Race {
     private int raceLength;
     private ArrayList<Horse> lanes;
-    String winner;
 
     /**
      * Constructor for objects of class Race
@@ -23,7 +22,7 @@ public class Race {
     public Race(int distance, int numberOfLanes) {
         // initialise instance variables
         raceLength = distance;
-        lanes = new ArrayList(numberOfLanes);
+        lanes = new ArrayList<Horse>(numberOfLanes);
         for (int i = 0; i < numberOfLanes; i++) {
             lanes.add(i, null); // empty lane
         }
@@ -59,7 +58,6 @@ public class Race {
         }
 
         while (!finished) {
-
             // move each horse
             for (int i = 0; i < lanes.size(); i++) {
                 if (lanes.get(i) == null) {
@@ -71,36 +69,17 @@ public class Race {
             // print the race positions
             printRace();
 
-            // if any of the three horses has won the race is finished
-            if (returnWinnerCount() == 1) {
+            // if any horse has won, finish the race
+            if (returnWinners().size() == 1) {
                 finished = true;
-
-                // print the winner
-                for (int i = 0; i < lanes.size(); i++) {
-                    if (raceWonBy(lanes.get(i))) {
-                        winner = lanes.get(i).getName();
-                        lanes.get(i).setConfidence(lanes.get(i).getConfidence() + Horse.confidenceAdjustment);
-                    }
-                }
-                System.out.println("And the winner is... " + winner + "!");
+                winnerConfidenceBooster(returnWinners());
+                System.out.println("Winner: " + returnWinners().get(0));
             } else {
-                boolean allHorsesFallen = false;
-                for (Horse horse : lanes) {
-                    if (horse == null) {
-                        continue; // skip empty lanes
-                    }
-                    // check if all horses have fallen
-                    if (horse.hasFallen()) {
-                        allHorsesFallen = true;
-                    } else {
-                        allHorsesFallen = false;
-                        break; // exit the loop if at least one horse is still running
-                    }
-                }
-                if (allHorsesFallen) {
-                    System.out.println("All horses have fallen. No winner!");
+                if (allHorsesFallen()) {
                     finished = true;
+                    System.out.println("All horses have fallen. No winner!");
                 }
+                // Else, continue
             }
             // Waits an amount of ms before the next turn
             turnInterval(300);
@@ -113,18 +92,64 @@ public class Race {
      * @return
      */
 
-    public ArrayList<String> returnWinners(Horse[] lanes) {
-        ArrayList<String> winners = new ArrayList<String>();
+    public ArrayList<Horse> returnWinners() {
+        // Initialises an empty list of winners
+        // to be filled with the horses that have won
+        ArrayList<Horse> winners = new ArrayList<>(0);
+        // Loops through all lanes, finding the horses that have won
         for (Horse horse : lanes) {
             if (horse == null) {
                 continue; // skip empty lanes
             }
+            // A winner is identified by having travelled the full distance
             if (raceWonBy(horse)) {
-                winners.add(horse.getName());
+                winners.add(horse);
             }
         }
-        System.out.println("Winners: " + winners);
         return winners;
+    }
+
+    // Increases the confidence of the winning horse(s)
+    public void winnerConfidenceBooster(ArrayList<Horse> winners) {
+        for (Horse horse : winners) {
+            horse.setConfidence(horse.getConfidence() + Horse.confidenceAdjustment);
+        }
+    }
+
+    public void printWinners(ArrayList<Horse> winners) {
+        // If there is one winner
+        if (winners.size() == 1) {
+            System.out.println(winners.get(0) + " is the winner!");
+        }
+        // If there are multiple winners
+        else if (winners.size() > 1) {
+            System.out.print("Winners: ");
+            for (int i = 0; i < winners.size(); i++) {
+                System.out.print(winners.get(i));
+                if (i < winners.size() - 1) {
+                    System.out.print(", ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public boolean allHorsesFallen() {
+        boolean allHorsesFallen = false;
+
+        for (Horse horse : lanes) {
+            if (horse == null)
+                continue; // skip empty lanes
+
+            //
+            if (horse.hasFallen())
+                allHorsesFallen = true;
+            else {
+                allHorsesFallen = false;
+                break; // exit the loop if at least one horse is still running
+            }
+        }
+        return allHorsesFallen;
     }
 
     /**
