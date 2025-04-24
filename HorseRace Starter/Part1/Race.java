@@ -166,8 +166,8 @@ public class Race {
             if (num < (0.1 * theHorse.getConfidence())) {
                 theHorse.fall();
             }
-            // if the horse has not fallen, move it forward
-            else if (!theHorse.hasFallen()) {
+
+            else if (num < theHorse.getConfidence()) {
                 theHorse.moveForward();
             }
         }
