@@ -47,7 +47,7 @@ public class Horse {
         return this.symbol;
     }
 
-    public void goBackToStart() {
+    public static void goBackToStart() {
         this.distanceTravelled = 0;
         this.hasFallen = false;
     }
