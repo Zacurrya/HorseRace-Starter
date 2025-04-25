@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="HorseRace-Starter">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/HorseRace-Starter" />
+      <root url="file://$PROJECT_DIR$/HorseRace-Starter/GUI" />
+    </SOURCES>
+  </library>
+</component>
